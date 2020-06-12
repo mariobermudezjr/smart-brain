@@ -31,15 +31,20 @@ class Profile extends React.Component {
   onProfileUpdate = (data) => {
     fetch(`http://localhost:3000/profile/${this.props.user.id}`, {
       method: 'post',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: window.sessionStorage.getItem('token'),
+      },
       body: JSON.stringify({
         formInput: data,
       }),
     })
       .then((response) => {
-        this.props.toggleModal()
-        this.props.loadUser({ ...this.props.user, ...data })
-        response.json()
+        if (response.status === 200 || response.status === 304) {
+          this.props.toggleModal()
+          this.props.loadUser({ ...this.props.user, ...data })
+          response.json()
+        }
       })
       .catch(console.log)
   }

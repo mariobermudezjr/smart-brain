@@ -102,20 +102,25 @@ class App extends Component {
   }
 
   calculateFacesLocation = (data) => {
-    const clarifaiFaceRegions = data.outputs[0].data.regions
-    const image = document.getElementById('inputimage')
-    const width = Number(image.width)
-    const height = Number(image.height)
+    if (data && data.outputs) {
+      const clarifaiFaceRegions = data.outputs[0].data.regions
+      const image = document.getElementById('inputimage')
+      const width = Number(image.width)
+      const height = Number(image.height)
 
-    const faceLocations = clarifaiFaceRegions.map((region) =>
-      this.calculateFaceLocation(region, width, height)
-    )
+      const faceLocations = clarifaiFaceRegions.map((region) =>
+        this.calculateFaceLocation(region, width, height)
+      )
 
-    return faceLocations
+      return faceLocations
+    }
+    return
   }
 
   displayFaceBoxes = (boxes) => {
-    this.setState({ boxes: boxes })
+    if (boxes) {
+      this.setState({ boxes: boxes })
+    }
   }
 
   onInputChange = (event) => {
@@ -126,7 +131,10 @@ class App extends Component {
     this.setState({ imageUrl: this.state.input })
     fetch('http://localhost:3000/imageurlfaces', {
       method: 'post',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: window.sessionStorage.getItem('token'),
+      },
       body: JSON.stringify({
         input: this.state.input,
       }),
@@ -136,7 +144,10 @@ class App extends Component {
         if (response) {
           fetch('http://localhost:3000/image', {
             method: 'put',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: window.sessionStorage.getItem('token'),
+            },
             body: JSON.stringify({
               id: this.state.user.id,
             }),
