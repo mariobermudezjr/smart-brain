@@ -163,8 +163,13 @@ class App extends Component {
       .catch((err) => console.log(err))
   }
 
+  removeSessionToken = () => {
+    window.sessionStorage.removeItem('token')
+  }
+
   onRouteChange = (route) => {
     if (route === 'signout') {
+      this.removeSessionToken()
       return this.setState(initialState)
     } else if (route === 'home') {
       this.setState({ isSignedIn: true })
